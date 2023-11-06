@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.ViewEngines;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace BookManagementApi.Models
+namespace Models.Models
 {
     public class Book
     {
@@ -15,7 +14,7 @@ namespace BookManagementApi.Models
         [Required]
         public string Content { get; set; }
 
-        
+
         public int CategoryId { get; set; }
         public Category Category { get; set; }
         public ICollection<Review> Reviews { get; set; }
