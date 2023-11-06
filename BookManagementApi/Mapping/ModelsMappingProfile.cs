@@ -13,22 +13,18 @@ namespace BookManagementApi.Mapping
     {
         public ModelsMappingProfile()
         {
-            // Book mappings
             CreateMap<Book, BookDTO>()
-                .ForMember(dto => dto.Category.Name, conf => conf.MapFrom(ol => ol.Category.Name))
-                .ForMember(dto => dto.AverageRating, conf => conf.MapFrom(ol => ol.Reviews.Any() ? ol.Reviews.Average(r => r.Rating) : 0));
+                  .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Category.Id))
+                  .ReverseMap();
 
             CreateMap<BookDTO, Book>()
-                .ForMember(entity => entity.Category, conf => conf.Ignore()) // Assume that we handle the category assignment separately
-                .ForMember(entity => entity.Reviews, conf => conf.Ignore());
+            .ForMember(dest => dest.Content, opt => opt.Ignore());
 
-            // Category mappings
             CreateMap<Category, CategoryDTO>();
 
             CreateMap<CategoryDTO, Category>()
                 .ForMember(entity => entity.Books, conf => conf.Ignore());
 
-            // Review mappings
             CreateMap<Review, ReviewDTO>()
                 .ForMember(dto => dto.BookId, conf => conf.MapFrom(ol => ol.Book.Id));
 
@@ -37,4 +33,4 @@ namespace BookManagementApi.Mapping
         }
     }
 }
-    
+

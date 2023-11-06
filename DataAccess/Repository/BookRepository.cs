@@ -11,7 +11,11 @@ namespace ASP.DataAccess.Repository
         {
             _db = db;
         }
-
+        public Book FindById(int id)
+        {
+            var book=_db.Books.FirstOrDefault(x => x.Id == id);
+            return book;
+        }
         public void RemoveById(int id)
         {
             var book = _db.Books.FirstOrDefault(x => x.Id == id);

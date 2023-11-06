@@ -6,5 +6,6 @@ namespace ASP.DataAccess.Repository.IRepository
     {
         void Update(Book book);
         void RemoveById(int id);
+        Book FindById(int id);
     }
 }

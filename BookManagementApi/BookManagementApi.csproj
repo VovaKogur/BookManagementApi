@@ -11,6 +11,8 @@
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Google.Protobuf" Version="3.25.0" />
+    <PackageReference Include="itext.licensing.base" Version="4.1.2" />
+    <PackageReference Include="iTextSharp" Version="5.5.13.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0-rc.2.23480.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="8.0.0-rc.2.23480.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0-rc.2.23480.1" />
@@ -18,6 +20,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="PdfPig" Version="0.1.9-alpha-20231029-17d50" />
+    <PackageReference Include="PDFsharp" Version="1.50.5147" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 

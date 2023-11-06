@@ -1,4 +1,6 @@
-﻿namespace BookManagementApi.Middlewares
+﻿using Newtonsoft.Json;
+
+namespace BookManagementApi.Middlewares
 {
     public class ErrorDetails
     {

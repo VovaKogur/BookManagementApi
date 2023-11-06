@@ -1,7 +1,6 @@
 ﻿using ASP.DataAccess.Repository.IRepository;
 using AutoMapper;
-using Google.Protobuf.WellKnownTypes;
-using Microsoft.AspNetCore.Authorization;
+using BookManagementApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Models.DTO;
 using Models.Models;
@@ -15,27 +14,43 @@ namespace BookManagementApi.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IPdfService _pdfService;
 
-        public BookController(IUnitOfWork unitOfWork, IMapper mapper)
+        public BookController(IUnitOfWork unitOfWork, IMapper mapper, IPdfService pdfService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _pdfService = pdfService;
         }
 
         [HttpPost, Route(RESTfulEndpointConstants.Books.ADD_BOOK)]
-        [RequestFormLimits(MultipartBodyLengthLimit = 5 * 1024 * 1024, ValueCountLimit = 4, ValueLengthLimit = 1024)]
-        [Consumes("multipart/form-data")]
         public IActionResult AddBook([FromForm] BookDTO bookDto)
         {
+            if (bookDto.PdfFile == null || bookDto.PdfFile.Length == 0)
+            {
+                return BadRequest("PDF is required.");
+            }
+
+            if (bookDto.PdfFile.Length > 5 * 1024 * 1024)
+            {
+                return BadRequest("File size exceeds 5 MB.");
+            }
+            byte[] fileData;
+            using (var binaryReader = new BinaryReader(bookDto.PdfFile.OpenReadStream()))
+            {
+                fileData = binaryReader.ReadBytes((int)bookDto.PdfFile.Length);
+            }
+
+
+            var extractedText = _pdfService.ExtractTextFromPdfPage(fileData);
+
             var book = _mapper.Map<Book>(bookDto);
+
+            book.Content = extractedText;
+
             _unitOfWork.Book.Add(book);
 
-            var response = new
-            {
-                Code = "Success",
-                Message = "Book Added!"
-            };
-            return Ok(response);
+            return CreatedAtAction(nameof(Book), new { id = book.Id }, book);
         }
         [HttpPut, Route(RESTfulEndpointConstants.Books.UPDATE)]
         public IActionResult UpdateBook([FromBody] Book bookDto)
@@ -61,5 +76,22 @@ namespace BookManagementApi.Controllers
             };
             return Ok(response);
         }
+        [HttpGet]
+        [Route(RESTfulEndpointConstants.Books.SEARCH)]
+        public IActionResult SearchBooksByPhrase(string phrase)
+        {
+            if (string.IsNullOrWhiteSpace(phrase))
+            {
+                return BadRequest("Search phrase is required.");
+            }
+            var booksWithPhrase = _unitOfWork.Book.GetAll()
+                .Where(b => b.Content!=null && b.Content.Contains(phrase))
+                .ToList();
+
+            var bookDtos = _mapper.Map<List<BookDTO>>(booksWithPhrase);
+
+            return Ok(bookDtos);
+        }
+
     }
 }
